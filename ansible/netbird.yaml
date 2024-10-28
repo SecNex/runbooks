@@ -1,0 +1,28 @@
+- name: Install Netbird
+  hosts: hcloud
+  become: yes
+  vars:
+    admin_url: "https://netbird.example.com"
+    management_url: "https://netbird.example.com:33073"
+    setup_key: "00000000-0000-0000-0000-000000000000"
+  tasks:
+    - name: Install Netbird
+      shell: curl -fsSL https://pkgs.netbird.io/install.sh | sh
+      ignore_errors: yes
+      failed_when: "'NetBird seems to be installed already' not in stdout and 'NetBird service is running' not in stdout"
+
+    - name: Output message for Netbird
+      debug:
+        msg: "Netbird installed."
+      ignore_errors: yes
+
+    - name: Start Netbird
+      shell: netbird up --management-url {{ management_url }} --admin-url {{ admin_url }} --setup-key {{ setup_key }}
+      ignore_errors: yes
+      failed_when: management_url is not defined or admin_url is not defined or setup_key is not defined
+
+    - name: Output message for Netbird
+      debug:
+        msg: "Netbird started. Management URL: {{ management_url }}. Admin URL: {{ admin_url }}. Setup key: {{ setup_key }}."
+      ignore_errors: yes
+      failed_when: management_url is not defined or admin_url is not defined or setup_key is not defined

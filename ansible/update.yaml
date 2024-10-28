@@ -1,0 +1,25 @@
+- name: Linux Patch Management
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update and upgrade all packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+      when: ansible_os_family == "Debian"
+      
+    - name: Output message for Debian
+      debug:
+        msg: "Debian packages updated and upgraded."
+      when: ansible_os_family == "Debian"
+      
+    - name: Update and upgrade all packages (RHEL)
+      yum:
+        name: "*"
+        state: latest
+      when: ansible_os_family == "RedHat"
+      
+    - name: Output message for RedHat
+      debug:
+        msg: "RedHat packages updated and upgraded."
+      when: ansible_os_family == "RedHat"
